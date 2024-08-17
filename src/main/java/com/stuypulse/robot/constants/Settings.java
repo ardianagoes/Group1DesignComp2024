@@ -24,8 +24,8 @@ public interface Swerve
 {
     double WHEEL_LOCK_TIME = 10; 
     double WHEEL_DIAMETER = 4;
-    double DRIVE_GEAR_RATIO = 0;
-    double ANGLE_GEAR_RATIO = 0;
+    double DRIVE_GEAR_RATIO = 3.33;
+    double ANGLE_GEAR_RATIO = 3.33;
     double MAX_SPEED = Units.feetToMeters(14.5);
 
     boolean headingCorrection = false;
