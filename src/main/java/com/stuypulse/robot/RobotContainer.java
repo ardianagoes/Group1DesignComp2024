@@ -5,14 +5,20 @@
 
 package com.stuypulse.robot;
 
+
+import java.io.File;
+
 import com.stuypulse.robot.commands.auton.DoNothingAuton;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.stuylib.input.Gamepad;
 import com.stuypulse.stuylib.input.gamepads.AutoGamepad;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import com.stuypulse.robot.subsystems.swerveDrive.swerveDriveSubsystem;
 
 public class RobotContainer {
 
@@ -21,7 +27,8 @@ public class RobotContainer {
     public final Gamepad operator = new AutoGamepad(Ports.Gamepad.OPERATOR);
     
     // Subsystem
-
+    private final swerveDriveSubsystem drivebase = new swerveDriveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                         "swerve/neo"));
     // Autons
     private static SendableChooser<Command> autonChooser = new SendableChooser<>();
 
@@ -57,5 +64,15 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autonChooser.getSelected();
+    }
+
+    public void setMotorBrake(boolean brake)
+    {
+      drivebase.setMotorBrake(brake);
+    }
+
+    public void setDriveMode()
+    {
+
     }
 }

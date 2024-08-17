@@ -5,15 +5,22 @@
 
 package com.stuypulse.robot;
 
+import java.io.File;
+import java.io.IOException;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import swervelib.parser.SwerveParser;
+import com.stuypulse.robot.constants.Settings;
 public class Robot extends TimedRobot {
 
     private RobotContainer robot;
     private Command auto;
-
+    private Timer disabledTimer;
     /*************************/
     /*** ROBOT SCHEDULEING ***/
     /*************************/
@@ -36,7 +43,13 @@ public class Robot extends TimedRobot {
     public void disabledInit() {}
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        if (disabledTimer.hasElapsed(Settings.Swerve.WHEEL_LOCK_TIME))
+        {
+          robot.setMotorBrake(false);
+          disabledTimer.stop();
+        }
+    }
 
     /***********************/
     /*** AUTONOMOUS MODE ***/
@@ -62,10 +75,14 @@ public class Robot extends TimedRobot {
     /*******************/
 
     @Override
+
+    // When teleop is initated, stop autonomous.
     public void teleopInit() {
         if (auto != null) {
             auto.cancel();
         }
+        robot.setDriveMode();
+        robot.setMotorBrake(true);
     }
 
     @Override
@@ -80,7 +97,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        CommandScheduler.getInstance().cancelAll();
+        // Cancels all commands 
+    CommandScheduler.getInstance().cancelAll();
+        try
+    {
+        // If there is a missing json file, give an error
+      new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
+    } catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
     }
 
     @Override
